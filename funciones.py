@@ -68,6 +68,13 @@ def dibujar_cuadricula(canvas, tam_celda):
     canvas.create_text(15, nivel_medioN - 10, text='-0.5', anchor='w', fill='black')
     canvas.create_text(15, nivel_bajo - 10, text='-1', anchor='w', fill='black')
 
+# Dibujar flechas
+
+def flecha(canvas, x, y, i):
+    canvas.create_line(x-10, y+10, x, y, fill='blue', width=2)
+    canvas.create_line(x-10, y-10, x, y, fill='blue', width=2)
+    canvas.create_text(x-(TAM_CELDA)/2, nivel_1-(TAM_CELDA)/2, text=i, anchor='w', fill='black')
+
 # Señal NRZ-L
 def dibujar_nrzl(canvas, bits, tam_celda):
     if not bits:
@@ -80,6 +87,7 @@ def dibujar_nrzl(canvas, bits, tam_celda):
     # Nivel inicial y primera línea
     nivel_anterior = nivel_0 if bits[0] == '0' else nivel_1
     canvas.create_line(x, nivel_anterior, x + tam_celda, nivel_anterior, fill='blue', width=2)
+    flecha(canvas, x + tam_celda, nivel_anterior, bits[0])
 
     x += tam_celda
 
@@ -93,6 +101,10 @@ def dibujar_nrzl(canvas, bits, tam_celda):
 
         # Dibujar la línea final en X
         canvas.create_line(x, nivel_actual, x + tam_celda, nivel_actual, fill='blue', width=2)
+        
+        # Dibujar flecha
+        flecha(canvas, x + tam_celda, nivel_actual, bits[i])
+        
         nivel_anterior = nivel_actual
 
         # Avanzar a la siguiente celda
@@ -100,7 +112,37 @@ def dibujar_nrzl(canvas, bits, tam_celda):
 
 # Funciones vacías para implementar luego
 def dibujar_nrzi(canvas, bits, tam_celda):
-    pass
+    if not bits:
+        return
+
+    # Centrar
+    ancho_senal = len(bits) * tam_celda
+    x = (ANCHO - ancho_senal) // 2
+
+    # Nivel inicial y primera línea
+    nivel_anterior = nivel_1 if bits[0] == '0' else nivel_0
+    canvas.create_line(x, nivel_anterior, x + tam_celda, nivel_anterior, fill='blue', width=2)
+
+    x += tam_celda
+
+    for i in range(1, len(bits)):
+        # Primera linea
+        nivel_actual = nivel_1 if bits[i] == '0' else nivel_0
+
+        # Si el nivel cambia, dibujar la línea vertical
+        if nivel_actual != nivel_anterior:
+            canvas.create_line(x, nivel_anterior, x, nivel_actual, fill='blue', width=2)
+
+        # Dibujar la línea final en X
+        canvas.create_line(x, nivel_actual, x + tam_celda, nivel_actual, fill='blue', width=2)
+        
+        # Dibujar flecha
+        flecha(canvas, x + tam_celda, nivel_actual, bits[i])
+        
+        nivel_anterior = nivel_actual
+
+        # Avanzar a la siguiente celda
+        x += tam_celda
 
 def dibujar_ami(canvas, bits, tam_celda):
     pass
