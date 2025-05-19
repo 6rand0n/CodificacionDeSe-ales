@@ -86,12 +86,8 @@ def dibujar_nrzl(canvas, bits, tam_celda):
 
     # Nivel inicial y primera línea
     nivel_anterior = nivel_0 if bits[0] == '0' else nivel_1
-    canvas.create_line(x, nivel_anterior, x + tam_celda, nivel_anterior, fill='blue', width=2)
-    flecha(canvas, x + tam_celda, nivel_anterior, bits[0])
 
-    x += tam_celda
-
-    for i in range(1, len(bits)):
+    for i in range(0, len(bits)):
         # Primera linea
         nivel_actual = nivel_0 if bits[i] == '0' else nivel_1
 
@@ -114,20 +110,27 @@ def dibujar_nrzl(canvas, bits, tam_celda):
 def dibujar_nrzi(canvas, bits, tam_celda):
     if not bits:
         return
+    
+    polaridad = 1
 
     # Centrar
     ancho_senal = len(bits) * tam_celda
     x = (ANCHO - ancho_senal) // 2
 
     # Nivel inicial y primera línea
-    nivel_anterior = nivel_1 if bits[0] == '0' else nivel_0
-    canvas.create_line(x, nivel_anterior, x + tam_celda, nivel_anterior, fill='blue', width=2)
+    nivel_anterior = nivel_0 if bits[0] == '0' else nivel_1
 
-    x += tam_celda
-
-    for i in range(1, len(bits)):
+    for i in range(0, len(bits)):
         # Primera linea
-        nivel_actual = nivel_1 if bits[i] == '0' else nivel_0
+
+        if bits[i] == '1':
+            if polaridad == 1:
+                nivel_actual = nivel_1
+            else:
+                nivel_actual = nivel_0
+            polaridad *= -1
+        else:
+            nivel_actual = nivel_anterior
 
         # Si el nivel cambia, dibujar la línea vertical
         if nivel_actual != nivel_anterior:
@@ -156,15 +159,8 @@ def dibujar_ami(canvas, bits, tam_celda):
 
     # Nivel inicial y primera línea
     nivel_anterior = nivel_0 if bits[0] == '0' else nivel_1
-    if bits[0] == '1':
-        polaridad *= -1
 
-    canvas.create_line(x, nivel_anterior, x + tam_celda, nivel_anterior, fill='blue', width=2)
-    flecha(canvas, x + tam_celda, nivel_anterior, bits[0])
-
-    x += tam_celda
-
-    for i in range(1, len(bits)):
+    for i in range(0, len(bits)):
         # Primera linea
         if bits[i] == '1':
             if polaridad == 1:
@@ -200,17 +196,10 @@ def dibujar_pseudoternario(canvas, bits, tam_celda):
     ancho_senal = len(bits) * tam_celda
     x = (ANCHO - ancho_senal) // 2
 
-    # Nivel inicial y primera línea
+    # Nivel inicial
     nivel_anterior = nivel_1 if bits[0] == '0' else nivel_0
-    if bits[0] == '0':
-        polaridad *= -1
-        
-    canvas.create_line(x, nivel_anterior, x + tam_celda, nivel_anterior, fill='blue', width=2)
-    flecha(canvas, x + tam_celda, nivel_anterior, bits[0])
 
-    x += tam_celda
-
-    for i in range(1, len(bits)):
+    for i in range(0, len(bits)):
         # Primera linea
         if bits[i] == '0':
             if polaridad == 1:
@@ -244,25 +233,11 @@ def dibujar_manchester(canvas, bits, tam_celda):
     ancho_senal = len(bits) * tam_celda
     x = (ANCHO - ancho_senal) // 2
 
-    # Nivel inicial y primera línea
+    # Nivel inicial 
     nivel_anterior = nivel_0 if bits[0] == '1' else nivel_1
     nivel_actual = nivel_0 if bits[0] == '0' else nivel_1
-    canvas.create_line(x, nivel_anterior, x + tam_celda/2, nivel_anterior, fill='blue', width=2)
-    canvas.create_line(x+tam_celda/2, nivel_anterior, x + tam_celda/2, nivel_actual, fill='blue', width=2)
-    canvas.create_line(x+tam_celda/2, nivel_actual, x + tam_celda, nivel_actual, fill='blue', width=2)
 
-    # nivel_actual = nivel_0 if bits[1] == '0' else nivel_1
-    
-    nivel_actual = nivel_0 if bits[1] == '0' else nivel_1
-    if nivel_actual == nivel_anterior:
-            nivel_anterior = nivel_1 if nivel_anterior == nivel_0 else nivel_0
-            canvas.create_line(x, nivel_actual, x, nivel_anterior, fill="blue", width=2)
-
-    flecha(canvas, x + tam_celda, nivel_anterior, bits[0])
-
-    x += tam_celda
-
-    for i in range(1, len(bits)):
+    for i in range(0, len(bits)):
         # Primera linea
         nivel_actual = nivel_0 if bits[i] == '0' else nivel_1
 
@@ -288,25 +263,11 @@ def dibujar_diferencial(canvas, bits, tam_celda):
 
     if not bits:
         return
+    
     # Centrar
     ancho_senal = len(bits) * tam_celda
     x = (ANCHO - ancho_senal) // 2
-
-     # Nivel inicial y primera línea
-    nivel_anterior = nivel_0 if bits[0] == '1' else nivel_1
-    nivel_actual = nivel_0 if bits[0] == '0' else nivel_1
-    canvas.create_line(x, nivel_anterior, x + tam_celda/2, nivel_anterior, fill='blue', width=2)
-    canvas.create_line(x+tam_celda/2, nivel_anterior, x + tam_celda/2, nivel_actual, fill='blue', width=2)
-    canvas.create_line(x+tam_celda/2, nivel_actual, x + tam_celda, nivel_actual, fill='blue', width=2)
-
-    # nivel_actual = nivel_0 if bits[1] == '0' else nivel_1
     
-    nivel_actual = nivel_0 if bits[1] == '0' else nivel_1
-    if nivel_actual == nivel_anterior:
-            nivel_anterior = nivel_1 if nivel_anterior == nivel_0 else nivel_0
-            canvas.create_line(x, nivel_actual, x, nivel_anterior, fill="blue", width=2)
-
-    flecha(canvas, x + tam_celda, nivel_anterior, bits[0])
 
     x += tam_celda
 
@@ -314,11 +275,17 @@ def dibujar_diferencial(canvas, bits, tam_celda):
         if bits[i] == 1:
             nivel_actual = nivel_0 if bits[i] == '0' else nivel_1
 
+        if i == 1:
+            nivel_actual = nivel_0 if bits[1] == '1' else nivel_1
+            if nivel_actual == nivel_anterior:
+                nivel_anterior = nivel_1 if nivel_anterior == nivel_0 else nivel_0
+                canvas.create_line(x, nivel_actual, x, nivel_anterior, fill="blue", width=2)
+
+
         if nivel_actual == nivel_anterior:
             nivel_anterior = nivel_1 if nivel_anterior == nivel_0 else nivel_0
             canvas.create_line(x, nivel_actual, x, nivel_anterior, fill="blue", width=2)
 
-        
         if bits[i] == 1:  
             if polaridad == 1:
                 nivel_actual = nivel_1 

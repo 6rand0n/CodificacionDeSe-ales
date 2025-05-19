@@ -93,7 +93,7 @@ graficar(canvas, "", opcion)
 
 T = tk.Label (tp, text="Brandon Javier Becerra Davila  415730",font = TituloF, fg = "Steel Blue")
 T.place (relx = 0.6, rely = 0.9, anchor = "sw")
-T = tk.Label (tp, text="Bruno Gonzalez Castillo             301249",font = TituloF, fg = "Steel Blue")
+T = tk.Label (tp, text="Bruno Gonzalez Castillo        301249",font = TituloF, fg = "Steel Blue")
 T.place (relx = 0.6, rely = 0.95, anchor = "sw")
 
 tk.mainloop()
