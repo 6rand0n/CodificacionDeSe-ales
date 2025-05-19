@@ -261,7 +261,7 @@ def dibujar_diferencial(canvas, bits, tam_celda):
     if not bits:
         return
 
-    polaridad = -1
+    polaridad = 1
 
     # Centrar
     ancho_senal = len(bits) * tam_celda
@@ -277,16 +277,15 @@ def dibujar_diferencial(canvas, bits, tam_celda):
         if bits[i] == '0':
             if i == 0:
                 nivel_actual = nivel_1 # Solo para el primer bit
+            # Crea la linea vertical si es un 0 el bit
             canvas.create_line(x, nivel_actual, x, nivel_anterior, fill="blue", width=2)
         else:
-            if i != 1:
-                nivel_anterior = nivel_actual
-            if polaridad == 1:
-                nivel_actual = nivel_1
-            else:
-                nivel_actual = nivel_0
+            # Actualiza los niveles si es un 1 el bit y la polaridad cambia
+            nivel_anterior = nivel_actual
+            nivel_actual = nivel_0 if polaridad == 1 else nivel_1
             polaridad *= -1
 
+        # Dibuja la grafica con los niveles dados
         canvas.create_line(x, nivel_anterior, x + tam_celda/2, nivel_anterior, fill='blue', width=2)
         canvas.create_line(x+tam_celda/2, nivel_anterior, x + tam_celda/2, nivel_actual, fill='blue', width=2)
         canvas.create_line(x+tam_celda/2, nivel_actual, x + tam_celda, nivel_actual, fill='blue', width=2)
