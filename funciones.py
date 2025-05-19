@@ -238,7 +238,6 @@ def dibujar_manchester(canvas, bits, tam_celda):
     nivel_actual = nivel_0 if bits[0] == '0' else nivel_1
 
     for i in range(0, len(bits)):
-        # Primera linea
         nivel_actual = nivel_0 if bits[i] == '0' else nivel_1
 
         # Si el nivel cambia, dibujar la línea vertical
@@ -259,40 +258,34 @@ def dibujar_manchester(canvas, bits, tam_celda):
         x += tam_celda
 
 def dibujar_diferencial(canvas, bits, tam_celda):
-    polaridad = 1
-
     if not bits:
         return
-    
+
+    polaridad = -1
+
     # Centrar
     ancho_senal = len(bits) * tam_celda
     x = (ANCHO - ancho_senal) // 2
-    
 
-    x += tam_celda
+    # Inicializado 
+    nivel_anterior = nivel_0
+    nivel_actual = nivel_1 # Para hacerla "global" en caso de 1
 
-    for i in range(1, len(bits)):
-        if bits[i] == 1:
-            nivel_actual = nivel_0 if bits[i] == '0' else nivel_1
+    for i in range(0, len(bits)):
 
-        if i == 1:
-            nivel_actual = nivel_0 if bits[1] == '1' else nivel_1
-            if nivel_actual == nivel_anterior:
-                nivel_anterior = nivel_1 if nivel_anterior == nivel_0 else nivel_0
-                canvas.create_line(x, nivel_actual, x, nivel_anterior, fill="blue", width=2)
-
-
-        if nivel_actual == nivel_anterior:
-            nivel_anterior = nivel_1 if nivel_anterior == nivel_0 else nivel_0
+        # Si el bit es 0, dibujar la línea vertical
+        if bits[i] == '0':
+            if i == 0:
+                nivel_actual = nivel_1 # Solo para el primer bit
             canvas.create_line(x, nivel_actual, x, nivel_anterior, fill="blue", width=2)
-
-        if bits[i] == 1:  
+        else:
+            if i != 1:
+                nivel_anterior = nivel_actual
             if polaridad == 1:
-                nivel_actual = nivel_1 
-                polaridad *= -1
+                nivel_actual = nivel_1
             else:
-                nivel_actual = nivel_bajo
-                polaridad *= -1
+                nivel_actual = nivel_0
+            polaridad *= -1
 
         canvas.create_line(x, nivel_anterior, x + tam_celda/2, nivel_anterior, fill='blue', width=2)
         canvas.create_line(x+tam_celda/2, nivel_anterior, x + tam_celda/2, nivel_actual, fill='blue', width=2)
@@ -300,9 +293,6 @@ def dibujar_diferencial(canvas, bits, tam_celda):
         
         # Dibujar flecha
         flecha(canvas, x + tam_celda, nivel_actual, bits[i])
-        
-        nivel_anterior = nivel_actual
 
         # Avanzar a la siguiente celda
         x += tam_celda
-
